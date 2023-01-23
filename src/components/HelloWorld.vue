@@ -7,7 +7,9 @@
     <br />
     <br />
     <div v-if="show == false">
-      <span>Кем будете ходить ?</span>
+      <span style="font-family: monospace; font-weight: 800"
+        >Кем будете ходить ?</span
+      >
       <br />
       <br />
       <div style="display: flex; justify-content: center">
@@ -144,7 +146,7 @@ export default {
 }
 .allGame {
   box-shadow: 15px 10px 30px #000;
-  padding: 60px;
+  padding: 20px 60px 60px 60px;
   width: 165px;
   height: 310px;
   border: 5px solid;
