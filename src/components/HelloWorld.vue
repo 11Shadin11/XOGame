@@ -1,5 +1,6 @@
 <template>
   <div class="allGame">
+    <div class="dialog" v-if="dialog"></div>
     <span style="font: 17px monospace; font-weight: 900"
       >Крестики - нолики</span
     >
@@ -26,7 +27,7 @@
     <div v-if="show == true">Ход игрока '{{ player }}'</div>
     <br />
     <div>
-      <div class="block" @change="watchChange">
+      <div class="block">
         <div class="all">
           <div class="field" id="n1" @click="setPlayer('n1')"></div>
           <div class="field" id="n2" @click="setPlayer('n2')"></div>
@@ -44,7 +45,23 @@
         </div>
       </div>
     </div>
-    <button style="margin: 20px" @click="reset">Сброс</button>
+    <div style="display: flex; justify-content: center">
+      <button
+        class="button"
+        style="
+          margin: 20px;
+          margin: 20px;
+          background: conic-gradient(orange, red, orange, red, orange);
+          border-radius: 10px;
+          padding: 10px;
+          width: 100px;
+          font: 20px monospace;
+        "
+        @click="reset"
+      >
+        Сброс
+      </button>
+    </div>
   </div>
 </template>
 
@@ -55,6 +72,8 @@ export default {
     return {
       player: '',
       show: false,
+      dialog: false,
+      win: [],
     };
   },
   mounted() {},
@@ -67,27 +86,65 @@ export default {
     },
     setPlayer(id) {
       document.getElementById(id).innerHTML = this.player;
+      document.getElementById(id).classList.add('disabledbutton');
       if (this.player == 'X') {
         this.player = 'O';
-      } else this.player = 'X';
+      } else if (this.player == 'O') this.player = 'X';
+      this.watchChange();
     },
     reset() {
       for (let i = 1; i < 10; i++) {
         document.getElementById(`n${i}`).innerHTML = '';
+        document.getElementById(`n${i}`).classList.remove('disabledbutton');
       }
       this.show = false;
+      this.player = '';
     },
-    watchChange(event) {
-      console.log(event);
+    watchChange() {
+      let search = document.getElementsByClassName('field');
+      let xo = ['X', 'O'];
+      for (let i = 0; i < xo.length; i++) {
+        if (
+          (search[0].innerHTML == xo[i] &&
+            search[1].innerHTML == xo[i] &&
+            search[2].innerHTML == xo[i]) ||
+          (search[3].innerHTML == xo[i] &&
+            search[4].innerHTML == xo[i] &&
+            search[5].innerHTML == xo[i]) ||
+          (search[6].innerHTML == xo[i] &&
+            search[7].innerHTML == xo[i] &&
+            search[8].innerHTML == xo[i]) ||
+          (search[0].innerHTML == xo[i] &&
+            search[3].innerHTML == xo[i] &&
+            search[6].innerHTML == xo[i]) ||
+          (search[2].innerHTML == xo[i] &&
+            search[5].innerHTML == xo[i] &&
+            search[8].innerHTML == xo[i]) ||
+          (search[1].innerHTML == xo[i] &&
+            search[4].innerHTML == xo[i] &&
+            search[7].innerHTML == xo[i]) ||
+          (search[0].innerHTML == xo[i] &&
+            search[4].innerHTML == xo[i] &&
+            search[8].innerHTML == xo[i])
+        ) {
+          alert('WINNER');
+          this.dialog = true;
+        } else console.log('LOH');
+      }
     },
   },
 };
 </script>
 
 <style scoped>
+.button:hover {
+  margin-top: -10px;
+  box-shadow: 0px 0px 20px #000;
+  transform: scale(1.1);
+}
 .allGame {
   box-shadow: 15px 10px 30px #000;
-  padding: 50px;
+  padding: 60px;
   width: 165px;
   height: 310px;
   border: 5px solid;
@@ -121,5 +178,36 @@ input {
   border: 1px solid;
   width: 50px;
   height: 50px;
+}
+.disabledbutton {
+  pointer-events: none;
+}
+.dialog {
+  color: #fff;
+  font: 30px monospace;
+  border-radius: 100%;
+  border: 5px solid #444;
+  background: conic-gradient(red, blue, green, red);
+  width: 250px;
+  height: 250px;
+  position: absolute;
+  animation: spin 1.4s linear infinite;
+}
+.dialog::before {
+  content: '';
+  position: absolute;
+  width: 85%;
+  height: 85%;
+  border-radius: 50%;
+  background: #fff;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: inset 0 0 150px -70px grey;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
